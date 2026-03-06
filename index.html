@@ -3,758 +3,712 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Preços de Software</title>
+    <title>Simulador de Investimento - Desoft7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
-        .price-card {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: #2563eb;
             cursor: pointer;
             border-radius: 50%;
         }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #2563eb;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .pricing-details {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 0.5rem;
-        }
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .print-container, .print-container * {
-                visibility: visible;
-            }
-            .print-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-            .no-print {
-                display: none;
-            }
-            @page {
-                margin: 0.5in;
-            }
-        }
+        
+        input[type="range"].accent-purple-600::-webkit-slider-thumb { background: #9333ea; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .hidden { display: none; }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 p-4 md:p-8 text-gray-800 min-h-screen">
 
-    <div class="container price-card">
-        <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-2">Calculadora de Preços</h1>
-        <p class="text-xl text-gray-600 text-center mb-8">Defina os parâmetros para simular um orçamento.</p>
+    <div class="max-w-7xl mx-auto">
         
-        <!-- Faixa de Faturamento -->
-        <div class="mb-8">
-            <label for="revenue-range" class="block text-lg font-bold text-gray-800 mb-2">Faixa de Faturamento Mensal</label>
-            <select id="revenue-range" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-                <option value="1">Até R$ 50 mil</option>
-                <option value="2">R$ 50 mil a 100 mil</option>
-                <option value="3">R$ 100 mil a 200 mil</option>
-                <option value="4">R$ 200 mil a 500 mil</option>
-                <option value="5">R$ 500 mil a 1 milhão</option>
-                <option value="6">R$ 1 milhão a 3 milhões</option>
-                <option value="7">Acima de R$ 3 milhões</option>
-            </select>
-            <div class="pricing-details mt-2">
-                <span class="font-semibold">Mensalidade Base:</span>
-                <span id="revenue-price">R$ 450,00</span>
-            </div>
-        </div>
-
-        <!-- Regime Tributário -->
-        <div class="mb-8">
-            <label for="regime-tributario" class="block text-lg font-bold text-gray-800 mb-2">Regime Tributário</label>
-            <select id="regime-tributario" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-                <option value="Simples Nacional">Simples Nacional</option>
-                <option value="Regime Normal/Lucro Presumido">Regime Normal/Lucro Presumido</option>
-            </select>
-            <div class="pricing-details mt-2">
-                <span class="font-semibold">Acréscimo na mensalidade:</span>
-                <span id="regime-price">R$ 0,00</span>
-            </div>
-        </div>
-
-        <!-- Campos de Quantidade -->
-        <div class="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">Acesso Online (Usuários)</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="online-users" min="1" max="50" value="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="online-users-value" class="w-12 text-center text-lg font-semibold text-blue-600">1</span>
+        <!-- Header Geral -->
+        <header class="mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="p-4 bg-blue-600 rounded-2xl text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="online-users-pricing-info">1º grátis | R$ 55,90/un (2-3) | R$ 45,90/un (4-6) | R$ 40,90/un (>6)</span>
-                </div>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">Ponto de Venda (PDV)</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="pos" min="0" max="20" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="pos-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="pos-pricing-info">R$ 55,90/un (1) | R$ 55,90/un (2-3) | R$ 45,90/un (4-6) | R$ 35,90/un (>6)</span>
-                </div>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">CNPJ Adicional</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="cnpj-adicional" min="0" max="15" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="cnpj-adicional-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="cnpj-adicional-pricing-info">R$ 119,90/un (1-3) | R$ 79,90/un (>3)</span>
-                </div>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">Terminais TEF</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="tef-terminals" min="0" max="20" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="tef-terminals-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="tef-pricing-info">R$ 159,90 (principal) + R$ 59,90/un (demais)</span>
-                </div>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">Terminais PIX</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="pix-terminals" min="0" max="20" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="pix-terminals-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="pix-pricing-info">R$ 45,90 (principal) + R$ 15,90/un (demais)</span>
-                </div>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2">App de Força de Venda / Comanda</h2>
-                <div class="flex items-center gap-4">
-                    <input type="range" id="force-app-terminals" min="0" max="20" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <span id="force-app-terminals-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                </div>
-                <div class="pricing-details">
-                    <span class="font-semibold">Preço:</span>
-                    <span id="force-app-pricing-info">R$ 55,90/un (1-3) | R$ 45,90/un (4-6) | R$ 40,90/un (>6)</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Implantação e Treinamento -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Implantação e Treinamento</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Nº de Colaboradores para Treinamento</h3>
-                    <div class="flex items-center gap-4">
-                        <input type="range" id="colaboradores" min="0" max="40" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <span id="colaboradores-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
-                    </div>
-                </div>
-                <div class="flex flex-col justify-end">
-                    <p class="text-base text-gray-700 font-medium mt-2">Horas de Treinamento: <span id="horas-treinamento" class="font-bold">0</span>h</p>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight uppercase">Simulador de Investimento</h1>
+                    <p class="text-gray-500 text-sm font-medium">Soluções Unificadas: Desoft7 • Imendes • BI</p>
                 </div>
             </div>
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="text-right">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Mensal Combinado</p>
+                    <p class="text-3xl font-black text-blue-600" id="header-grand-total">R$ 0,00</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Menu de Abas -->
+        <div class="flex bg-white rounded-3xl shadow-sm border border-gray-200 mb-8 overflow-hidden p-1.5 max-w-2xl mx-auto">
+            <button onclick="switchTab('desoft7')" id="tab-btn-desoft7" class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-2xl bg-blue-600 text-white shadow-md">ERP Desoft7</button>
+            <button onclick="switchTab('imendes')" id="tab-btn-imendes" class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-2xl text-gray-400 hover:bg-gray-50">Fiscal Imendes</button>
+            <button onclick="switchTab('bi')" id="tab-btn-bi" class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-2xl text-gray-400 hover:bg-gray-50">BI Intelligence</button>
         </div>
 
-        <!-- Importação de Dados -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Importação de Dados</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Horas de Importação</h3>
-                    <div class="flex items-center gap-4">
-                        <input type="range" id="import-hours" min="0" max="50" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <span id="import-hours-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
+        <div class="grid grid-cols-1 gap-8">
+            
+            <!-- ======================= ABA DESOFT7 ======================= -->
+            <div id="tab-desoft7" class="space-y-8 fade-in">
+                <div class="bg-white p-8 rounded-3xl shadow-lg border border-gray-200">
+                    <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-2">Calculadora de Preços (ERP)</h1>
+                    <p class="text-lg text-gray-500 text-center mb-8">Defina os parâmetros para simular um orçamento.</p>
+
+                    <!-- Faturamento -->
+                    <div class="mb-8">
+                        <label class="block text-lg font-bold text-gray-800 mb-2">Faixa de Faturamento Mensal</label>
+                        <select id="d7Revenue" onchange="calculateAll()" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium">
+                            <option value="1">Até R$ 50 mil</option>
+                            <option value="2">R$ 50 mil a 100 mil</option>
+                            <option value="3">R$ 100 mil a 200 mil</option>
+                            <option value="4">R$ 200 mil a 500 mil</option>
+                            <option value="5">R$ 500 mil a 1 milhão</option>
+                            <option value="6">R$ 1 milhão a 3 milhões</option>
+                            <option value="7">Acima de R$ 3 milhões</option>
+                        </select>
+                        <div class="text-sm text-gray-500 mt-2">
+                            <span class="font-semibold">Mensalidade Base:</span> <span id="d7BasePriceDisplay">R$ 550,00</span>
+                        </div>
                     </div>
-                    <div class="pricing-details mt-2">
-                        <span>Importação simples: Aprox. 15h. Importação completa: Aprox. 30h.</span>
+
+                    <!-- Regime -->
+                    <div class="mb-8">
+                        <label class="block text-lg font-bold text-gray-800 mb-2">Regime Tributário</label>
+                        <select id="d7Regime" onchange="calculateAll()" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium">
+                            <option value="Simples Nacional">Simples Nacional</option>
+                            <option value="Regime Normal/Lucro Presumido">Regime Normal/Lucro Presumido</option>
+                        </select>
+                        <div class="text-sm text-gray-500 mt-2">
+                            <span class="font-semibold">Acréscimo:</span> <span id="d7RegimeDisplay">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <!-- Sliders -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">Acesso Online (<span id="d7UsersVal" class="text-blue-600">1</span>)</h2>
+                            <input type="range" id="d7Users" min="1" max="50" value="1" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">1º grátis | R$ 55,90 (2-3) | R$ 45,90 (4-6) | R$ 40,90 (>6)</div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">PDV (<span id="d7PosVal" class="text-blue-600">0</span>)</h2>
+                            <input type="range" id="d7Pos" min="0" max="20" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">R$ 55,90 (1-3) | R$ 45,90 (4-6) | R$ 35,90 (>6)</div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">CNPJ Adicional (<span id="d7CnpjVal" class="text-blue-600">0</span>)</h2>
+                            <input type="range" id="d7Cnpj" min="0" max="15" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">R$ 119,90 (1-3) | R$ 79,90 (>3)</div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">Terminais TEF (<span id="d7TefVal" class="text-blue-600">0</span>)</h2>
+                            <input type="range" id="d7Tef" min="0" max="20" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">R$ 159,90 (principal) + R$ 59,90 (demais)</div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">Terminais PIX (<span id="d7PixVal" class="text-blue-600">0</span>)</h2>
+                            <input type="range" id="d7Pix" min="0" max="20" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">R$ 45,90 (principal) + R$ 15,90 (demais)</div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">Força de Venda (<span id="d7ForceVal" class="text-blue-600">0</span>)</h2>
+                            <input type="range" id="d7Force" min="0" max="20" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="text-xs text-gray-500 mt-2">R$ 55,90 (1) | R$ 45,90 (2-3) | R$ 40,90 (4-6) | R$ 30,90 (>6)</div>
+                        </div>
+                    </div>
+
+                    <!-- Implantação e Treinamento -->
+                    <div class="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Implantação e Treinamento</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">Colaboradores: <span id="d7ColabVal" class="text-blue-600">0</span></h3>
+                                <input type="range" id="d7Colab" min="0" max="40" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                            <div class="flex flex-col justify-end">
+                                <p class="text-base text-gray-700 font-medium">Horas de Treinamento: <span id="d7HoursDisplay" class="font-bold">0h</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Importação -->
+                    <div class="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Importação de Dados</h2>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Horas: <span id="d7ImportHoursVal" class="text-blue-600">0</span></h3>
+                            <input type="range" id="d7ImportHours" min="0" max="50" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <p class="text-xs text-gray-500 mt-2">Simples ~15h | Completa ~30h (R$ 150/h)</p>
+                        </div>
+                    </div>
+
+                    <!-- Integrações -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Aplicações e Integrações</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="integrations-container">
+                            <!-- Injetado via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Totais ERP -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                        <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-lg">
+                            <span class="text-sm font-light uppercase">Valor Mensal Estimado</span>
+                            <div class="flex items-center justify-center mt-2">
+                                <span class="text-3xl font-bold">R$</span>
+                                <span id="d7TotalMonthly" class="text-5xl font-extrabold ml-2">0,00</span>
+                            </div>
+                        </div>
+                        <div class="text-center bg-green-600 text-white p-6 rounded-xl shadow-lg">
+                            <span class="text-sm font-light uppercase">Valor de Implantação</span>
+                            <div class="flex items-center justify-center mt-2">
+                                <span class="text-3xl font-bold">R$</span>
+                                <span id="d7TotalImpl" class="text-5xl font-extrabold ml-2">0,00</span>
+                            </div>
+                        </div>
+                        <div class="text-center bg-yellow-600 text-white p-6 rounded-xl shadow-lg sm:col-span-2">
+                            <span class="text-sm font-light uppercase">Valor Estimado de Importação</span>
+                            <div class="flex items-center justify-center mt-2">
+                                <span class="text-3xl font-bold">R$</span>
+                                <span id="d7TotalImport" class="text-5xl font-extrabold ml-2">0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="generatePrintSummary()" class="mt-8 w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-xl transition-colors duration-200 text-lg shadow-xl">
+                        Gerar Resumo para Impressão
+                    </button>
+                </div>
+            </div>
+
+            <!-- ======================= ABA IMENDES ======================= -->
+            <div id="tab-imendes" class="space-y-8 fade-in hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                        <h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-2 tracking-tight">Parâmetros do Cliente</h2>
+                        <div class="mb-8">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Volume de Itens (SKUs)</label>
+                            <select id="imPlanoIdx" onchange="calculateAll()" class="w-full p-4 bg-gray-50 border border-gray-300 rounded-xl outline-none font-black text-sm">
+                                <!-- Populated via JS -->
+                            </select>
+                            <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider italic">Compliance Fiscal Garantido</p>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 mb-2 tracking-tight">Filiais Adicionais</label>
+                            <div class="flex items-center gap-4">
+                                <button onclick="changeFiliais(-1)" class="bg-gray-200 hover:bg-gray-300 p-2 rounded-xl h-12 w-12 text-xl font-black transition-all">-</button>
+                                <div id="imFiliaisDisplay" class="w-20 text-center h-12 bg-gray-50 border border-gray-300 rounded-xl flex items-center justify-center font-black text-xl">0</div>
+                                <button onclick="changeFiliais(1)" class="bg-gray-200 hover:bg-gray-300 p-2 rounded-xl h-12 w-12 text-xl font-black transition-all">+</button>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 text-[10px] font-bold text-blue-800 uppercase tracking-widest space-y-1">
+                            <p>• Desconto Filial: 20%</p>
+                            <p>• Custo Base: R$ 190,00 / CNPJ</p>
+                            <p>• Impostos Estimados: 15%</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-blue-900 text-white p-8 rounded-3xl shadow-lg relative overflow-hidden">
+                            <p class="text-blue-200 text-xs font-black uppercase tracking-widest">Preço de Tabela (Lista)</p>
+                            <h3 id="imTotalLista" class="text-4xl font-black mt-2">R$ 0,00</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-3xl border border-gray-200">
+                            <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest">Preço Piso (Mínimo)</p>
+                            <h3 id="imTotalMinimo" class="text-2xl font-black">R$ 0,00</h3>
+                        </div>
+                        <div class="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
+                            <p class="text-emerald-700 text-[10px] font-black uppercase tracking-widest">Lucro Líquido Real</p>
+                            <h3 id="imLucroLiquido" class="text-3xl font-black mt-1 text-emerald-800">R$ 0,00</h3>
+                            <div class="pt-4 border-t border-emerald-200 mt-4 flex justify-between text-[10px] font-black text-emerald-700 uppercase">
+                                <span>Margem Real:</span>
+                                <span id="imMargemPerc">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b">
+                        <h3 class="font-black text-gray-700 text-xs uppercase tracking-widest">Matriz vs Filiais (Tabela de Referência)</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-600 uppercase text-[10px] font-black tracking-widest">
+                                    <th class="px-6 py-4">Plano</th>
+                                    <th class="px-6 py-4">Itens</th>
+                                    <th class="px-6 py-4 text-center">Matriz (Lista)</th>
+                                    <th class="px-6 py-4 text-center">Filial (Lista)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100" id="imTableBody">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Aplicações e Integrações Adicionais -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Aplicações e Integrações Adicionais</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Integração com Plataformas -->
-                 <div>
-                    <h2 class="text-lg font-bold text-gray-800 mb-2">Integrações com Plataformas</h2>
-                    <div class="flex items-center gap-4">
-                        <input type="range" id="platform-integrations" min="0" max="10" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <span id="platform-integrations-value" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
+            <!-- ======================= ABA BI ======================= -->
+            <div id="tab-bi" class="space-y-6 fade-in hidden">
+                <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                    <h3 class="font-black text-slate-800 mb-8 flex items-center gap-3">
+                        <span class="w-1.5 h-6 bg-purple-600 rounded-full"></span> Business Intelligence (BI)
+                    </h3>
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">Escala de Faturamento do Cliente</label>
+                            <select id="biEscalaIdx" onchange="calculateAll()" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm">
+                                <!-- JS Populated -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div>
+                                <div class="flex justify-between mb-4">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-tight">Dashboards Adicionais</label>
+                                    <span id="biModulosVal" class="bg-purple-600 text-white px-3 py-1 rounded-lg font-black">0</span>
+                                </div>
+                                <input type="range" id="biModulos" min="0" max="10" value="0" oninput="calculateAll()" class="w-full h-1.5 accent-purple-600 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 tracking-tighter">+ R$ 199,90 cada módulo extra</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-4">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-tight">Filiais BI</label>
+                                    <span id="biCnpjsVal" class="bg-purple-600 text-white px-3 py-1 rounded-lg font-black">0</span>
+                                </div>
+                                <input type="range" id="biCnpjs" min="0" max="10" value="0" oninput="calculateAll()" class="w-full h-1.5 accent-purple-600 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 tracking-tighter">+ R$ 129,90 cada CNPJ extra</p>
+                            </div>
+                            <div class="md:col-span-2">
+                                <div class="flex justify-between mb-4">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-tight">Licenças Usuários</label>
+                                    <span id="biUsersVal" class="bg-purple-600 text-white px-3 py-1 rounded-lg font-black">0</span>
+                                </div>
+                                <input type="range" id="biUsers" min="0" max="50" value="0" oninput="calculateAll()" class="w-full h-1.5 accent-purple-600 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 tracking-tighter">R$ 50,00 Venda | R$ 30,00 Custo</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="pricing-details">
-                        <span class="font-semibold">Preço:</span>
-                        <span id="platform-pricing-info">R$ 139,90/un</span>
-                    </div>
-                </div>
-
-                <!-- Geração de SPEDs -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="sped-generation" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Geração de SPEDs</span>
-                        <span class="block text-sm text-gray-500">Aumenta horas de treinamento</span>
-                    </div>
-                </label>
+                </section>
                 
-                <!-- Conectar SPC Brasil -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="spc-brasil" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Conectar SPC Brasil</span>
-                        <span class="block text-sm text-gray-500">+R$ 79,90</span>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 italic">Performance Comercial BI</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-xs font-black">
+                            <span class="text-slate-500">Faturamento Total</span>
+                            <span id="biTotal" class="text-purple-600">R$ 0,00</span>
+                        </div>
                     </div>
-                </label>
-                <!-- Conectar Domínio Contábil -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="domain-connect" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Conectar Domínio Contábil</span>
-                        <span class="block text-sm text-gray-500">+R$ 99,90</span>
-                    </div>
-                </label>
-                <!-- Painel de Preços para TV -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="tv-panel" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Painel de Preços para TV</span>
-                        <span class="block text-sm text-gray-500">+R$ 45,90</span>
-                    </div>
-                </label>
-                <!-- Conectar Nummus -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="numus-basic" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Conectar Nummus</span>
-                        <span class="block text-sm text-gray-500">A partir de +R$ 59,90</span>
-                    </div>
-                </label>
-                <!-- Etiquetas Eletrônicas Opticon -->
-                 <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="opticon-labels" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Etiquetas Eletrônicas Opticon</span>
-                        <span class="block text-sm text-gray-500">+R$ 139,90</span>
-                    </div>
-                </label>
-                <!-- Conectar Módulo de Produção -->
-                <label class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" id="modulo-producao" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                    <div class="flex-1">
-                        <span class="block text-lg font-medium text-gray-800">Conectar Módulo de Produção</span>
-                        <span class="block text-sm text-gray-500">+R$ 500,00</span>
-                    </div>
-                </label>
+                </div>
             </div>
+
         </div>
 
-        <!-- Preço Final -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-            <div class="text-center bg-blue-600 text-white p-6 rounded-xl shadow-lg">
-                <span class="text-sm font-light uppercase">Valor Mensal Estimado</span>
-                <div class="flex items-center justify-center mt-2">
-                    <span class="text-3xl font-bold">R$</span>
-                    <span id="monthly-price" class="text-5xl font-extrabold ml-2">0,00</span>
-                </div>
-            </div>
-            <div class="text-center bg-green-600 text-white p-6 rounded-xl shadow-lg">
-                <span class="text-sm font-light uppercase">Valor de Implantação</span>
-                <div class="flex items-center justify-center mt-2">
-                    <span class="text-3xl font-bold">R$</span>
-                    <span id="implementation-price" class="text-5xl font-extrabold ml-2">0,00</span>
-                </div>
-            </div>
-            <div class="text-center bg-yellow-600 text-white p-6 rounded-xl shadow-lg sm:col-span-2">
-                <span class="text-sm font-light uppercase">Valor Estimado de Importação</span>
-                <div class="flex items-center justify-center mt-2">
-                    <span class="text-3xl font-bold">R$</span>
-                    <span id="import-price" class="text-5xl font-extrabold ml-2">0,00</span>
-                </div>
-            </div>
-        </div>
-
-        <button id="print-summary-btn" class="mt-8 w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-xl transition-colors duration-200">
-            Gerar Resumo para Impressão
-        </button>
+        <footer class="mt-16 text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em] py-12 border-t border-slate-200">
+            Desoft7 Ecosystem • Inteligência Comercial e Fiscal • 2026
+        </footer>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const revenueRangeSelect = document.getElementById('revenue-range');
-            const onlineUsersInput = document.getElementById('online-users');
-            const onlineUsersValueSpan = document.getElementById('online-users-value');
-            const posInput = document.getElementById('pos');
-            const posValueSpan = document.getElementById('pos-value');
-            const cnpjAdicionalInput = document.getElementById('cnpj-adicional');
-            const cnpjAdicionalValueSpan = document.getElementById('cnpj-adicional-value');
-            const tefTerminalsInput = document.getElementById('tef-terminals');
-            const tefTerminalsValueSpan = document.getElementById('tef-terminals-value');
-            const pixTerminalsInput = document.getElementById('pix-terminals');
-            const pixTerminalsValueSpan = document.getElementById('pix-terminals-value');
-            const forceAppTerminalsInput = document.getElementById('force-app-terminals');
-            const forceAppTerminalsValueSpan = document.getElementById('force-app-terminals-value');
-            const colaboradoresInput = document.getElementById('colaboradores');
-            const colaboradoresValueSpan = document.getElementById('colaboradores-value');
-            const platformIntegrationsInput = document.getElementById('platform-integrations');
-            const platformIntegrationsValueSpan = document.getElementById('platform-integrations-value');
-            const horasTreinamentoSpan = document.getElementById('horas-treinamento');
-            const monthlyPriceSpan = document.getElementById('monthly-price');
-            const implementationPriceSpan = document.getElementById('implementation-price');
-            const importHoursInput = document.getElementById('import-hours');
-            const importHoursValueSpan = document.getElementById('import-hours-value');
-            const importPriceSpan = document.getElementById('import-price');
-            const printBtn = document.getElementById('print-summary-btn');
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const regimeTributarioSelect = document.getElementById('regime-tributario');
-            const regimePriceSpan = document.getElementById('regime-price');
+        // --- CONFIGURAÇÃO E DADOS ---
+        const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            // Tabela de Implantação e Treinamento (hardcoded do CSV)
-            const implementationData = {
-                1: { hours: 12, price: 3000 }, 2: { hours: 15, price: 3750 }, 3: { hours: 18, price: 4500 },
-                4: { hours: 21, price: 5250 }, 5: { hours: 24, price: 6000 }, 6: { hours: 27, price: 6750 },
-                7: { hours: 30, price: 7500 }, 8: { hours: 33, price: 8250 }, 9: { hours: 36, price: 9000 },
-                10: { hours: 39, price: 9750 }, 11: { hours: 42, price: 10500 }, 12: { hours: 45, price: 11250 },
-                13: { hours: 48, price: 12000 }, 14: { hours: 51, price: 12750 }, 15: { hours: 54, price: 13500 },
-                16: { hours: 57, price: 14250 }, 17: { hours: 60, price: 15000 }, 18: { hours: 63, price: 15750 },
-                19: { hours: 66, price: 16500 }, 20: { hours: 69, price: 17250 }, 21: { hours: 72, price: 18000 },
-                22: { hours: 75, price: 18750 }, 23: { hours: 78, price: 19500 }, 24: { hours: 81, price: 20250 },
-                25: { hours: 84, price: 21000 }, 26: { hours: 87, price: 21750 }, 27: { hours: 90, price: 22500 },
-                28: { hours: 93, price: 23250 }, 29: { hours: 96, price: 24000 }, 30: { hours: 99, price: 24750 },
-                31: { hours: 102, price: 25500 }, 32: { hours: 105, price: 26250 }, 33: { hours: 108, price: 27000 },
-                34: { hours: 111, price: 27750 }, 35: { hours: 114, price: 28500 }, 36: { hours: 117, price: 29250 },
-                37: { hours: 120, price: 30000 }, 38: { hours: 123, price: 30750 }, 39: { hours: 126, price: 31500 },
-                40: { hours: 129, price: 32250 }
-            };
-            const hourlyRate = 250;
-            const importHourlyRate = 150;
-
-            // Mensalidades por faixa de faturamento
-            const basePrices = {
-                '1': 550, '2': 650, '3': 750, '4': 850,
-                '5': 950, '6': 1150, '7': 1350
-            };
-            
-            // Preços dos adicionais
-            const prices = {
-                'spc-brasil': 79.90, 'tv-panel': 45.90,
-                'numus-basic': 59.90, 'opticon-labels': 139.90,
-                'domain-connect': 99.90, 'modulo-producao': 500.00
-            };
-
-            const tieredPrices = {
-                'online-users': {
-                    '1': 0, '2-3': 55.90, '4-6': 45.90, 'above_6': 40.90
-                },
-                'pos': {
-                    '1': 55.90, '2-3': 55.90, '4-6': 45.90, 'above_6': 35.90
-                },
-                'cnpj-adicional': {
-                    '1-3': 119.90, 'above_3': 79.90
-                },
-                'tef': { 'principal': 159.90, 'adicional': 59.90 },
-                'pix': { 'principal': 45.90, 'adicional': 15.90 },
-                'force-app': {
-                    '1': 55.90, '2-3': 45.90, '4-6': 40.90, 'above_6': 30.90
-                },
-                'platform-integrations': 139.90
-            };
-
-            const updatePricingInfo = () => {
-                const revenueTier = revenueRangeSelect.value;
-                document.getElementById('revenue-price').textContent = `R$ ${basePrices[revenueTier].toFixed(2).replace('.', ',')}`;
-
-                const numOnlineUsers = parseInt(onlineUsersInput.value);
-                const onlineUsersPrice = (numOnlineUsers > 1) ? ((numOnlineUsers <= 3) ? (numOnlineUsers - 1) * tieredPrices['online-users']['2-3'] : (numOnlineUsers <= 6) ? (numOnlineUsers - 1) * tieredPrices['online-users']['4-6'] : (numOnlineUsers - 1) * tieredPrices['online-users']['above_6']) : 0;
-                document.getElementById('online-users-value').textContent = numOnlineUsers;
-                document.getElementById('online-users-pricing-info').textContent = (numOnlineUsers > 1) ? `R$ ${onlineUsersPrice.toFixed(2).replace('.', ',')}` : '1º grátis | R$ 55,90/un (2-3) | R$ 45,90/un (4-6) | R$ 40,90/un (>6)';
-                
-                const numPos = parseInt(posInput.value);
-                document.getElementById('pos-value').textContent = numPos;
-                const posPrice = (numPos === 1) ? tieredPrices['pos'][1] : (numPos <= 3) ? numPos * tieredPrices['pos']['2-3'] : (numPos <= 6) ? numPos * tieredPrices['pos']['4-6'] : numPos * tieredPrices['pos']['above_6'];
-                document.getElementById('pos-pricing-info').textContent = (numPos > 0) ? `R$ ${posPrice.toFixed(2).replace('.', ',')}` : 'R$ 55,90/un (1-3) | R$ 45,90/un (4-6) | R$ 35,90/un (>6)';
-
-                const numCnpjAdicional = parseInt(cnpjAdicionalInput.value);
-                document.getElementById('cnpj-adicional-value').textContent = numCnpjAdicional;
-                const cnpjPrice = (numCnpjAdicional > 0) ? ((numCnpjAdicional <= 3) ? numCnpjAdicional * tieredPrices['cnpj-adicional']['1-3'] : numCnpjAdicional * tieredPrices['cnpj-adicional']['above_3']) : 0;
-                document.getElementById('cnpj-adicional-pricing-info').textContent = (numCnpjAdicional > 0) ? `R$ ${cnpjPrice.toFixed(2).replace('.', ',')}` : 'R$ 119,90/un (1-3) | R$ 79,90/un (>3)';
-
-                const numTefTerminals = parseInt(tefTerminalsInput.value);
-                document.getElementById('tef-terminals-value').textContent = numTefTerminals;
-                const tefPrice = (numTefTerminals > 0) ? tieredPrices['tef']['principal'] + (numTefTerminals > 1 ? (numTefTerminals - 1) * tieredPrices['tef']['adicional'] : 0) : 0;
-                document.getElementById('tef-pricing-info').textContent = (numTefTerminals > 0) ? `R$ ${tefPrice.toFixed(2).replace('.', ',')}` : 'R$ 159,90 (principal) + R$ 59,90/un (demais)';
-
-                const numPixTerminals = parseInt(pixTerminalsInput.value);
-                document.getElementById('pix-terminals-value').textContent = numPixTerminals;
-                const pixPrice = (numPixTerminals > 0) ? tieredPrices['pix']['principal'] + (numPixTerminals > 1 ? (numPixTerminals - 1) * tieredPrices['pix']['adicional'] : 0) : 0;
-                document.getElementById('pix-pricing-info').textContent = (numPixTerminals > 0) ? `R$ ${pixPrice.toFixed(2).replace('.', ',')}` : 'R$ 45,90 (principal) + R$ 15,90/un (demais)';
-
-                const numForceAppTerminals = parseInt(forceAppTerminalsInput.value);
-                document.getElementById('force-app-terminals-value').textContent = numForceAppTerminals;
-                let forceAppPrice = 0;
-                if (numForceAppTerminals > 0) {
-                    if (numForceAppTerminals <= 3) {
-                        forceAppPrice = 55.90 * numForceAppTerminals;
-                    } else if (numForceAppTerminals <= 6) {
-                        forceAppPrice = 45.90 * numForceAppTerminals;
-                    } else if (numForceAppTerminals <= 10) {
-                        forceAppPrice = 40.90 * numForceAppTerminals;
-                    } else {
-                        forceAppPrice = 30.90 * numForceAppTerminals;
-                    }
+        const state = {
+            d7: {
+                platformInt: 0,
+                extras: {
+                    sped: false, spc: false, domain: false, tv: false, numus: false, opticon: false, producao: false,
+                    ecommerce: false, instabuy: false, mercos: false, opabox: false, ifood: false, flixlog: false, mixfiscal: false
                 }
-                document.getElementById('force-app-pricing-info').textContent = (numForceAppTerminals > 0) ? `R$ ${forceAppPrice.toFixed(2).replace('.', ',')}` : 'R$ 55,90/un (1-3) | R$ 45,90/un (4-6) | R$ 40,90/un (>6)';
+            },
+            imendes: { filiais: 0, planoIdx: 0 },
+            bi: { escalaIdx: 0, modulos: 0, cnpjs: 0, users: 0 }
+        };
 
-                const numColaboradores = parseInt(colaboradoresInput.value);
-                document.getElementById('colaboradores-value').textContent = numColaboradores;
+        const planosImendes = [
+            { nome: 'Starter', desc: 'Até 1.500 itens', matrizLista: 335, matrizMin: 290, filialLista: 270, filialMin: 235 },
+            { nome: 'Basic', desc: 'Até 5.000 itens', matrizLista: 405, matrizMin: 350, filialLista: 325, filialMin: 280 },
+            { nome: 'Standard', desc: 'Até 10.000 itens', matrizLista: 450, matrizMin: 390, filialLista: 360, filialMin: 310 },
+            { nome: 'Professional', desc: 'Até 15.000 itens', matrizLista: 495, matrizMin: 430, filialLista: 395, filialMin: 340 },
+            { nome: 'Advanced', desc: 'Até 20.000 itens', matrizLista: 530, matrizMin: 460, filialLista: 425, filialMin: 365 },
+            { nome: 'Elite', desc: 'Até 30.000 itens', matrizLista: 670, matrizMin: 580, filialLista: 535, filialMin: 460 },
+            { nome: 'Enterprise', desc: 'Acima de 30.000 itens', matrizLista: 860, matrizMin: 750, filialLista: 690, filialMin: 600 }
+        ];
 
-                const numPlatformIntegrations = parseInt(platformIntegrationsInput.value);
-                document.getElementById('platform-integrations-value').textContent = numPlatformIntegrations;
-                const platformPrice = numPlatformIntegrations * tieredPrices['platform-integrations'];
-                document.getElementById('platform-pricing-info').textContent = (numPlatformIntegrations > 0) ? `R$ ${platformPrice.toFixed(2).replace('.', ',')}` : 'R$ 139,90/un';
+        const escalasBI = [
+            { nome: 'Nível 1 (100k - 200k)', preco: 199.90 },
+            { nome: 'Nível 2 (200k - 400k)', preco: 279.90 },
+            { nome: 'Nível 3 (400k - 700k)', preco: 359.90 },
+            { nome: 'Nível 4 (700k - 1.2M)', preco: 449.90 },
+            { nome: 'Nível 5 (1.2M - 2.5M)', preco: 529.90 },
+            { nome: 'Nível 6 (2.5M - 5M)', preco: 619.90 },
+            { nome: 'Nível 7 (Acima de 5M)', preco: 690.00 },
+        ];
 
-                const importHours = parseInt(importHoursInput.value);
-                document.getElementById('import-hours-value').textContent = importHours;
+        const d7IntegrationsList = [
+            { id: 'platformInt', label: 'Integrações Plataformas (R$ 139,90/un)', isRange: true },
+            { id: 'ecommerce', label: 'E-commerce', price: 139.9 },
+            { id: 'instabuy', label: 'InstaBuy', price: 139.9 },
+            { id: 'mercos', label: 'Mercos', price: 139.9 },
+            { id: 'opabox', label: 'OpaBox', price: 169.9 },
+            { id: 'ifood', label: 'iFood Mercado', price: 139.9 },
+            { id: 'flixlog', label: 'FlixLog', price: 139.9 },
+            { id: 'mixfiscal', label: 'MixFiscal', price: 139.9 },
+            { id: 'sped', label: 'Geração de SPEDs (Aumenta horas)', price: null },
+            { id: 'spc', label: 'Conectar SPC Brasil', price: 79.90 },
+            { id: 'domain', label: 'Conectar Domínio Contábil', price: 99.90 },
+            { id: 'tv', label: 'Painel de Preços para TV', price: 45.90 },
+            { id: 'numus', label: 'Conectar Nummus', price: 59.90 },
+            { id: 'opticon', label: 'Etiquetas Eletrônicas Opticon', price: 139.90 },
+            { id: 'producao', label: 'Conectar Módulo de Produção', price: 500.00 },
+        ];
 
-            };
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            renderD7Integrations();
+            renderImendesOptions();
+            renderBIOptions();
+            calculateAll();
+        }
 
-            const calculatePrice = () => {
-                const revenueTier = revenueRangeSelect.value;
-                const regimeTributario = regimeTributarioSelect.value;
-                const isSpedEnabled = document.getElementById('sped-generation').checked;
-                const isModuloProducaoEnabled = document.getElementById('modulo-producao').checked;
-                const numOnlineUsers = parseInt(onlineUsersInput.value);
-                const numPos = parseInt(posInput.value);
-                const numCnpjAdicional = parseInt(cnpjAdicionalInput.value);
-                const numTefTerminals = parseInt(tefTerminalsInput.value);
-                const numPixTerminals = parseInt(pixTerminalsInput.value);
-                const numForceAppTerminals = parseInt(forceAppTerminalsInput.value);
-                const numColaboradores = parseInt(colaboradoresInput.value);
-                const numPlatformIntegrations = parseInt(platformIntegrationsInput.value);
-                const importHours = parseInt(importHoursInput.value);
+        // --- RENDERIZADORES ---
+        function renderD7Integrations() {
+            const container = document.getElementById('integrations-container');
+            container.innerHTML = '';
 
-                let monthlyTotal = basePrices[revenueTier];
-                let totalHours = 0;
-                let implementationPrice = 0;
-                let importPrice = 0;
-                let regimePrice = 0;
+            // Range para Plataformas
+            const platformDiv = document.createElement('div');
+            platformDiv.innerHTML = `
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Integrações com Plataformas</h2>
+                <div class="flex items-center gap-4">
+                    <input type="range" id="d7PlatformInt" min="0" max="10" value="0" oninput="calculateAll()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                    <span id="d7PlatformIntVal" class="w-12 text-center text-lg font-semibold text-blue-600">0</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">R$ 139,90/un</p>
+            `;
+            container.appendChild(platformDiv);
 
-                // Acréscimo por Regime Tributário
-                if (regimeTributario === 'Regime Normal/Lucro Presumido') {
-                    regimePrice = 200;
-                    monthlyTotal += regimePrice;
-                }
-                document.getElementById('regime-price').textContent = `R$ ${regimePrice.toFixed(2).replace('.', ',')}`;
-                
-                // Cálculo para usuários online
-                if (numOnlineUsers > 1) {
-                    if (numOnlineUsers <= 3) {
-                        monthlyTotal += (numOnlineUsers - 1) * tieredPrices['online-users']['2-3'];
-                    } else if (numOnlineUsers <= 6) {
-                        monthlyTotal += (numOnlineUsers - 1) * tieredPrices['online-users']['4-6'];
-                    } else {
-                        monthlyTotal += (numOnlineUsers - 1) * tieredPrices['online-users']['above_6'];
-                    }
-                }
-                
-                // Cálculo para PDVs
-                if (numPos > 0) {
-                     if (numPos === 1) {
-                         monthlyTotal += tieredPrices['pos'][1];
-                     } else if (numPos <= 3) {
-                         monthlyTotal += numPos * tieredPrices['pos']['2-3'];
-                     } else if (numPos <= 6) {
-                         monthlyTotal += numPos * tieredPrices['pos']['4-6'];
-                     } else {
-                         monthlyTotal += numPos * tieredPrices['pos']['above_6'];
-                     }
-                }
-
-                // Cálculo para CNPJ Adicional
-                if (numCnpjAdicional > 0) {
-                    if (numCnpjAdicional <= 3) {
-                        monthlyTotal += numCnpjAdicional * tieredPrices['cnpj-adicional']['1-3'];
-                    } else {
-                        monthlyTotal += numCnpjAdicional * tieredPrices['cnpj-adicional']['above_3'];
-                    }
-                    totalHours += numCnpjAdicional;
-                }
-
-                // Cálculo para App de Força de Venda
-                if (numForceAppTerminals > 0) {
-                     let forceAppPrice = 0;
-                     if (numForceAppTerminals <= 3) {
-                         forceAppPrice = 55.90 * numForceAppTerminals;
-                     } else if (numForceAppTerminals <= 6) {
-                         forceAppPrice = 45.90 * numForceAppTerminals;
-                     } else if (numForceAppTerminals <= 10) {
-                         forceAppPrice = 40.90 * numForceAppTerminals;
-                     } else {
-                         forceAppPrice = 30.90 * numForceAppTerminals;
-                     }
-                     monthlyTotal += forceAppPrice;
-                }
-                
-                // Cálculo para Terminais TEF
-                if (numTefTerminals > 0) {
-                    monthlyTotal += tieredPrices['tef']['principal'];
-                    if (numTefTerminals > 1) {
-                         monthlyTotal += (numTefTerminals - 1) * tieredPrices['tef']['adicional'];
-                    }
-                }
-
-                // Cálculo para Terminais PIX
-                if (numPixTerminals > 0) {
-                    monthlyTotal += tieredPrices['pix']['principal'];
-                    if (numPixTerminals > 1) {
-                        monthlyTotal += (numPixTerminals - 1) * tieredPrices['pix']['adicional'];
-                    }
-                }
-
-                // Cálculo para Integrações com Plataformas
-                if (numPlatformIntegrations > 0) {
-                    monthlyTotal += numPlatformIntegrations * tieredPrices['platform-integrations'];
-                    totalHours += numPlatformIntegrations;
-                }
-
-                // Cálculo dos adicionais (checkboxes)
-                checkboxes.forEach(checkbox => {
-                    const id = checkbox.id;
-                    if (checkbox.checked && prices[id]) {
-                        monthlyTotal += prices[id];
-                    }
-                });
-
-                // Cálculo do valor de Implantação e Horas de Treinamento
-                if (numColaboradores > 0 && implementationData[numColaboradores]) {
-                    totalHours += implementationData[numColaboradores].hours;
-                }
-
-                // Adiciona 4 horas de treinamento se a Geração de SPEDs for selecionada
-                if (isSpedEnabled) {
-                    totalHours += 4;
-                }
-                
-                // Soma o valor das horas adicionais de treinamento
-                implementationPrice = totalHours * hourlyRate;
-
-                // Cálculo do valor de importação
-                importPrice = importHours * importHourlyRate;
-                
-                monthlyPriceSpan.textContent = monthlyTotal.toFixed(2).replace('.', ',');
-                implementationPriceSpan.textContent = implementationPrice.toFixed(2).replace('.', ',');
-                horasTreinamentoSpan.textContent = totalHours;
-                importPriceSpan.textContent = importPrice.toFixed(2).replace('.', ',');
-            };
-
-            const generatePrintableSummary = () => {
-                const now = new Date();
-                const formattedDate = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const formattedTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-                const revenueRangeText = revenueRangeSelect.options[revenueRangeSelect.selectedIndex].text;
-                const regimeTributario = regimeTributarioSelect.value;
-                const numOnlineUsers = parseInt(onlineUsersInput.value);
-                const numPos = parseInt(posInput.value);
-                const numCnpjAdicional = parseInt(cnpjAdicionalInput.value);
-                const numTefTerminals = parseInt(tefTerminalsInput.value);
-                const numPixTerminals = parseInt(pixTerminalsInput.value);
-                const numForceAppTerminals = parseInt(forceAppTerminalsInput.value);
-                const numColaboradores = parseInt(colaboradoresInput.value);
-                const numPlatformIntegrations = parseInt(platformIntegrationsInput.value);
-                const importHours = parseInt(importHoursInput.value);
-                const isSpedEnabled = document.getElementById('sped-generation').checked;
-                const isModuloProducaoEnabled = document.getElementById('modulo-producao').checked;
-                const horasTreinamento = horasTreinamentoSpan.textContent;
-                const monthlyPrice = monthlyPriceSpan.textContent;
-                const implementationPrice = implementationPriceSpan.textContent;
-                const importPrice = importPriceSpan.textContent;
-                const baseMonthlyPrice = basePrices[revenueRangeSelect.value].toFixed(2).replace('.', ',');
-
-                let summaryItems = '';
-                if (numOnlineUsers > 0) summaryItems += `<li>Acesso Online (Usuários): ${numOnlineUsers} unidade(s)</li>`;
-                if (numPos > 0) summaryItems += `<li>Ponto de Venda (PDV): ${numPos} unidade(s)</li>`;
-                if (numCnpjAdicional > 0) summaryItems += `<li>CNPJ Adicional: ${numCnpjAdicional} unidade(s)</li>`;
-                if (numTefTerminals > 0) summaryItems += `<li>Terminais TEF: ${numTefTerminals} unidade(s)</li>`;
-                if (numPixTerminals > 0) summaryItems += `<li>Terminais PIX: ${numPixTerminals} unidade(s)</li>`;
-                if (numForceAppTerminals > 0) summaryItems += `<li>App de Força de Venda / Comanda: ${numForceAppTerminals} unidade(s)</li>`;
-                if (numPlatformIntegrations > 0) summaryItems += `<li>Integrações com Plataformas: ${numPlatformIntegrations} unidade(s)</li>`;
-                
-                let additionalItems = '';
-                const checkboxLabels = {
-                    'spc-brasil': 'Conectar SPC Brasil',
-                    'tv-panel': 'Painel de Preços para TV',
-                    'numus-basic': 'Conectar Nummus',
-                    'opticon-labels': 'Etiquetas Eletrônicas Opticon',
-                    'domain-connect': 'Conectar Domínio Contábil',
-                    'sped-generation': 'Geração de SPEDs',
-                    'modulo-producao': 'Conectar Módulo de Produção'
-                };
-
-                Array.from(checkboxes).filter(cb => cb.checked).forEach(cb => {
-                    additionalItems += `<li>${checkboxLabels[cb.id] || cb.parentElement.querySelector('.block:nth-child(1)').textContent}</li>`;
-                });
-
-                let summary = `
-                    <div class="print-container p-8">
-                        <div style="text-align: center; margin-bottom: 0;">
-                            <h1 style="font-size: 1.25rem; font-weight: bold; margin: 0;">Desoft7 Tecnologia</h1>
-                            <p style="font-size: 0.875rem; color: #4b5563; line-height: 1.2; margin: 0; padding: 0;">Rua Bernardino de Campos, 1526, Jardim Continental, Itápolis/SP - Telefone: 16-3600-7717, Data: ${formattedDate} - Hora: ${formattedTime}</p>
-                        </div>
-                        <h1 style="font-size: 2rem; font-weight: bold; color: #1f2937; text-align: center; margin-top: 0.5rem; margin-bottom: 0.5rem;">Resumo do Orçamento</h1>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                            <div>
-                                <h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Plano Base</h2>
-                                <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">
-                                    <li>Faixa de Faturamento Mensal: ${revenueRangeText}</li>
-                                    <li>Regime Tributário: ${regimeTributario}</li>
-                                    <li>Valor Mensal Base: R$ ${baseMonthlyPrice}</li>
-                                </ul>
-                                ${summaryItems.length > 0 ? `<h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Módulos e Serviços</h2>
-                                <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">${summaryItems}</ul>` : ''}
-                            </div>
-                            <div>
-                                <h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Implantação e Treinamento</h2>
-                                <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">
-                                    <li>Nº de Colaboradores: ${numColaboradores}</li>
-                                    <li>Total de Horas de Treinamento: ${horasTreinamento}h</li>
-                                </ul>
-                                ${importHours > 0 ? `<h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Importação de Dados</h2>
-                                <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">
-                                    <li>Total de Horas de Importação: ${importHours}h</li>
-                                </ul>` : ''}
-                                ${additionalItems.length > 0 ? `<h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Adicionais</h2>
-                                <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">${additionalItems}</ul>` : ''}
-                            </div>
-                        </div>
-                        
-                        <h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-top: 0.5rem; margin-bottom: 1rem;">Totais</h2>
-                        <ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem;">
-                            <li>Valor Mensal Estimado: R$ ${monthlyPrice}</li>
-                            <li>Valor de Implantação: R$ ${implementationPrice}</li>
-                            <li>Valor Estimado de Importação: R$ ${importPrice}</li>
-                        </ul>
-                         <div style="margin-top: 2rem; font-size: 0.875rem; color: #4b5563;">
-                             <p style="font-weight: bold;">Observação:</p>
-                             <p>Banco de Dados ilimitado, Emissão de Documentos fiscais ilimitado, Anexo de documentos, fotos ilimitado</p>
-                        </div>
+            // Checkboxes
+            d7IntegrationsList.filter(i => !i.isRange).forEach(item => {
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-4 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors border border-gray-100";
+                label.innerHTML = `
+                    <input type="checkbox" id="d7_${item.id}" onchange="calculateAll()" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                    <div class="flex-1">
+                        <span class="block text-lg font-medium text-gray-800">${item.label}</span>
+                        ${item.price ? `<span class="block text-sm text-gray-500">+ ${formatBRL(item.price)}</span>` : ''}
                     </div>
                 `;
+                container.appendChild(label);
+            });
+        }
 
-                const printWindow = window.open('', '_blank', 'height=600,width=800');
-                printWindow.document.body.innerHTML = `
-                    <style>
-                        body { font-family: 'Inter', sans-serif; padding: 2rem; position: relative; }
-                        h1, h2 { color: #1f2937; }
-                        ul { margin-bottom: 1.5rem; }
-                        li { margin-bottom: 0.5rem; }
-                        .text-center { text-align: center; }
-                        .mb-8 { margin-bottom: 2rem; }
-                        .mb-4 { margin-bottom: 1rem; }
-                    </style>
-                    ${summary}
-                `;
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-            };
-
-            // Event Listeners
-            revenueRangeSelect.addEventListener('change', () => {
-                updatePricingInfo();
-                calculatePrice();
-            });
-            onlineUsersInput.addEventListener('input', () => {
-                onlineUsersValueSpan.textContent = onlineUsersInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            posInput.addEventListener('input', () => {
-                posValueSpan.textContent = posInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            cnpjAdicionalInput.addEventListener('input', () => {
-                cnpjAdicionalValueSpan.textContent = cnpjAdicionalInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            tefTerminalsInput.addEventListener('input', () => {
-                tefTerminalsValueSpan.textContent = tefTerminalsInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            pixTerminalsInput.addEventListener('input', () => {
-                pixTerminalsValueSpan.textContent = pixTerminalsInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            forceAppTerminalsInput.addEventListener('input', () => {
-                forceAppTerminalsValueSpan.textContent = forceAppTerminalsInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            platformIntegrationsInput.addEventListener('input', () => {
-                platformIntegrationsValueSpan.textContent = platformIntegrationsInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            colaboradoresInput.addEventListener('input', () => {
-                colaboradoresValueSpan.textContent = colaboradoresInput.value;
-                updatePricingInfo();
-                calculatePrice();
-            });
-            importHoursInput.addEventListener('input', () => {
-                importHoursValueSpan.textContent = importHoursInput.value;
-                calculatePrice();
-            });
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', calculatePrice);
-            });
-            printBtn.addEventListener('click', generatePrintableSummary);
-            regimeTributarioSelect.addEventListener('change', calculatePrice);
+        function renderImendesOptions() {
+            const select = document.getElementById('imPlanoIdx');
+            const tbody = document.getElementById('imTableBody');
             
-            // Cálculo inicial ao carregar a página
-            updatePricingInfo();
-            calculatePrice();
-        });
+            planosImendes.forEach((p, i) => {
+                // Select Option
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = `${p.nome} (${p.desc})`;
+                select.appendChild(opt);
+
+                // Table Row
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.id = `imRow-${i}`;
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-blue-900 font-black">${p.nome}</td>
+                    <td class="px-6 py-4 text-gray-500 font-medium">${p.desc}</td>
+                    <td class="px-6 py-4 text-center text-gray-800 font-bold">${formatBRL(p.matrizLista)}</td>
+                    <td class="px-6 py-4 text-center text-gray-600">${formatBRL(p.filialLista)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderBIOptions() {
+            const select = document.getElementById('biEscalaIdx');
+            escalasBI.forEach((e, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = `${e.nome} - ${formatBRL(e.preco)}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // --- LÓGICA DE CÁLCULO ---
+        function calculateAll() {
+            const resultsD7 = calculateD7();
+            const resultsImendes = calculateImendes();
+            const resultsBI = calculateBI();
+
+            const grandTotal = resultsD7.monthlyTotal + resultsImendes.totalLista + resultsBI.total;
+            document.getElementById('header-grand-total').textContent = formatBRL(grandTotal);
+        }
+
+        function calculateD7() {
+            // Inputs
+            const revenue = document.getElementById('d7Revenue').value;
+            const regime = document.getElementById('d7Regime').value;
+            const users = parseInt(document.getElementById('d7Users').value);
+            const pos = parseInt(document.getElementById('d7Pos').value);
+            const cnpj = parseInt(document.getElementById('d7Cnpj').value);
+            const tef = parseInt(document.getElementById('d7Tef').value);
+            const pix = parseInt(document.getElementById('d7Pix').value);
+            const force = parseInt(document.getElementById('d7Force').value);
+            const platformInt = parseInt(document.getElementById('d7PlatformInt').value);
+            const colab = parseInt(document.getElementById('d7Colab').value);
+            const importHours = parseInt(document.getElementById('d7ImportHours').value);
+
+            // Update UI Counters
+            document.getElementById('d7UsersVal').textContent = users;
+            document.getElementById('d7PosVal').textContent = pos;
+            document.getElementById('d7CnpjVal').textContent = cnpj;
+            document.getElementById('d7TefVal').textContent = tef;
+            document.getElementById('d7PixVal').textContent = pix;
+            document.getElementById('d7ForceVal').textContent = force;
+            document.getElementById('d7PlatformIntVal').textContent = platformInt;
+            document.getElementById('d7ColabVal').textContent = colab;
+            document.getElementById('d7ImportHoursVal').textContent = importHours;
+
+            // --- CÁLCULO ---
+            const basePrices = { '1': 550, '2': 650, '3': 750, '4': 850, '5': 950, '6': 1150, '7': 1350 };
+            let monthlyTotal = basePrices[revenue];
+            let implHours = 0;
+
+            document.getElementById('d7BasePriceDisplay').textContent = formatBRL(monthlyTotal);
+
+            // Regime
+            if(regime === 'Regime Normal/Lucro Presumido') {
+                monthlyTotal += 200;
+                document.getElementById('d7RegimeDisplay').textContent = "R$ 200,00";
+            } else {
+                document.getElementById('d7RegimeDisplay').textContent = "R$ 0,00";
+            }
+
+            // Users
+            if(users > 1) {
+                const uPrice = users <= 3 ? 45.90 : users <= 6 ? 40.90 : users <= 10 ? 35.90 : 30.90;
+                monthlyTotal += (users - 1) * uPrice;
+            }
+
+            // POS
+            if(pos > 0) {
+                const pPrice = pos <= 3 ? 55.90 : pos <= 6 ? 45.90 : pos <= 9 ? 40.90 : 35.90;
+                monthlyTotal += pos * pPrice;
+            }
+
+            // CNPJ
+            if(cnpj > 0) {
+                const cPrice = cnpj <= 3 ? 119.90 : 79.90;
+                monthlyTotal += cnpj * cPrice;
+                implHours += cnpj;
+            }
+
+            // TEF
+            if(tef > 0) {
+                monthlyTotal += 159.90;
+                if(tef > 1) monthlyTotal += (tef - 1) * 59.90;
+            }
+
+            // PIX
+            if(pix > 0) {
+                monthlyTotal += 45.90;
+                if(pix > 1) monthlyTotal += (pix - 1) * 15.90;
+            }
+
+            // Force App
+            if(force > 0) {
+                const fPrice = force === 1 ? 55.90 : force <= 3 ? 45.90 : 40.90;
+                monthlyTotal += force * fPrice;
+            }
+
+            // Platform Int
+            if(platformInt > 0) {
+                monthlyTotal += platformInt * 139.90;
+                implHours += platformInt;
+            }
+
+            // Checkboxes
+            d7IntegrationsList.filter(i => !i.isRange).forEach(item => {
+                const cb = document.getElementById(`d7_${item.id}`);
+                if(cb && cb.checked) {
+                    if(item.price) monthlyTotal += item.price;
+                    if(item.id === 'sped') implHours += 4;
+                }
+            });
+
+            // Impl
+            if(colab > 0) {
+                implHours += 12 + ((colab - 1) * 3);
+            }
+            const implPrice = implHours * 250;
+            const importPrice = importHours * 150;
+
+            // UI Updates
+            document.getElementById('d7HoursDisplay').textContent = `${implHours}h`;
+            document.getElementById('d7TotalMonthly').textContent = monthlyTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('d7TotalImpl').textContent = implPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('d7TotalImport').textContent = importPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+
+            return { monthlyTotal, implPrice, importPrice, implHours };
+        }
+
+        function calculateImendes() {
+            const planoIdx = document.getElementById('imPlanoIdx').value;
+            const filiais = parseInt(state.imendes.filiais);
+            document.getElementById('imFiliaisDisplay').textContent = filiais;
+
+            const plano = planosImendes[planoIdx];
+            const totalLista = plano.matrizLista + (filiais * plano.filialLista);
+            const totalMinimo = plano.matrizMin + (filiais * plano.filialMin);
+            const valorImposto = totalLista * 0.15;
+            const valorCusto = (1 + filiais) * 190;
+            const lucroLiquido = totalLista - valorImposto - valorCusto;
+            const margemPerc = totalLista > 0 ? (lucroLiquido / totalLista) * 100 : 0;
+
+            // Highlight Row
+            document.querySelectorAll('#imTableBody tr').forEach(tr => tr.classList.remove('bg-blue-50', 'font-bold'));
+            document.getElementById(`imRow-${planoIdx}`).classList.add('bg-blue-50', 'font-bold');
+
+            // UI
+            document.getElementById('imTotalLista').textContent = formatBRL(totalLista);
+            document.getElementById('imTotalMinimo').textContent = formatBRL(totalMinimo);
+            const lucroEl = document.getElementById('imLucroLiquido');
+            lucroEl.textContent = formatBRL(lucroLiquido);
+            lucroEl.className = `text-3xl font-black mt-1 ${lucroLiquido < 20 ? 'text-red-600' : 'text-emerald-800'}`;
+            document.getElementById('imMargemPerc').textContent = `${Math.round(margemPerc)}%`;
+
+            return { totalLista };
+        }
+
+        function changeFiliais(delta) {
+            let newVal = state.imendes.filiais + delta;
+            if(newVal < 0) newVal = 0;
+            state.imendes.filiais = newVal;
+            calculateAll();
+        }
+
+        function calculateBI() {
+            const escalaIdx = document.getElementById('biEscalaIdx').value;
+            const modulos = parseInt(document.getElementById('biModulos').value);
+            const cnpjs = parseInt(document.getElementById('biCnpjs').value);
+            const users = parseInt(document.getElementById('biUsers').value);
+
+            document.getElementById('biModulosVal').textContent = modulos;
+            document.getElementById('biCnpjsVal').textContent = cnpjs;
+            document.getElementById('biUsersVal').textContent = users;
+
+            const base = escalasBI[escalaIdx].preco;
+            const total = base + (modulos * 199.90) + (cnpjs * 129.90) + (users * 50.00);
+
+            document.getElementById('biTotal').textContent = formatBRL(total);
+
+            return { total };
+        }
+
+        // --- UTILS ---
+        function switchTab(tabId) {
+            // Hide all tabs
+            ['desoft7', 'imendes', 'bi'].forEach(id => {
+                document.getElementById(`tab-${id}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${id}`);
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-gray-400', 'hover:bg-gray-50');
+            });
+
+            // Show active
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const btn = document.getElementById(`tab-btn-${tabId}`);
+            btn.classList.remove('text-gray-400', 'hover:bg-gray-50');
+            btn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        }
+
+        function generatePrintSummary() {
+            // Re-calc for safety
+            const d7 = calculateD7();
+            
+            // Gather D7 Data for Print
+            const revenueText = document.getElementById('d7Revenue').options[document.getElementById('d7Revenue').selectedIndex].text;
+            const regime = document.getElementById('d7Regime').value;
+            
+            let items = '';
+            const inputs = [
+                {id: 'd7Users', label: 'Usuários Online'}, {id: 'd7Pos', label: 'PDVs'},
+                {id: 'd7Cnpj', label: 'CNPJs Adicionais'}, {id: 'd7Tef', label: 'TEF'},
+                {id: 'd7Pix', label: 'PIX'}, {id: 'd7Force', label: 'Força de Venda'},
+                {id: 'd7PlatformInt', label: 'Integrações Plataforma'}
+            ];
+            inputs.forEach(i => {
+                const val = document.getElementById(i.id).value;
+                if(val > 0) items += `<li>${i.label}: ${val} unidade(s)</li>`;
+            });
+
+            let extras = '';
+            d7IntegrationsList.filter(i => !i.isRange).forEach(item => {
+                const cb = document.getElementById(`d7_${item.id}`);
+                if(cb && cb.checked) extras += `<li>${item.label}</li>`;
+            });
+
+            const html = `
+                <div style="font-family: sans-serif; padding: 2rem;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 1.5rem; font-weight: bold; margin: 0; color: #1f2937;">Desoft7 Tecnologia</h1>
+                        <p style="font-size: 0.9rem; color: #4b5563;">Simulador de Orçamento</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Plano Base</h2>
+                            <ul style="margin-bottom: 1rem;">
+                                <li>Faixa: ${revenueText}</li>
+                                <li>Regime: ${regime}</li>
+                            </ul>
+                            ${items ? `<h3 style="font-weight: 600;">Itens</h3><ul>${items}</ul>` : ''}
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Implantação</h2>
+                            <ul>
+                                <li>Horas Treinamento: ${d7.implHours}h</li>
+                                <li>Valor: ${formatBRL(d7.implPrice)}</li>
+                                <li>Importação: ${formatBRL(d7.importPrice)}</li>
+                            </ul>
+                            ${extras ? `<h3 style="font-weight: 600; margin-top:1rem;">Adicionais</h3><ul>${extras}</ul>` : ''}
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; border-top: 2px solid #e5e7eb; padding-top: 1rem;">
+                        <h2 style="font-size: 1.5rem; font-weight: 700;">Mensalidade Estimada: ${formatBRL(d7.monthlyTotal)}</h2>
+                    </div>
+                </div>
+            `;
+
+            const win = window.open('', '', 'height=700,width=900');
+            win.document.write('<html><head><title>Resumo</title></head><body>');
+            win.document.write(html);
+            win.document.write('</body></html>');
+            win.document.close();
+            win.print();
+        }
+
+        // Init
+        window.onload = init;
+
     </script>
 </body>
 </html>
